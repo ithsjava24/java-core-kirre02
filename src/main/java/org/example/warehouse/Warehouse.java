@@ -3,6 +3,8 @@ package org.example.warehouse;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class Warehouse {
     private final String name;
@@ -70,21 +72,13 @@ public class Warehouse {
     }
 
     public List<ProductRecord> getProductsBy(Category category) {
-        List<ProductRecord> output = new ArrayList<>();
-        for (ProductRecord product : products) {
-            if (product.category().equals(category)) {
-                output.add(product);
-            }
-        }
-        return output;
+        return products.stream()
+        .filter(product -> product.category().equals(category))
+        .collect(Collectors.toList());
     }
 
     public Map<Category, List<ProductRecord>> getProductsGroupedByCategories() {
-        Map<Category, List<ProductRecord>> output = new HashMap<>();
-        for (ProductRecord product : products) {
-            output.computeIfAbsent(product.category(), _ -> new ArrayList<>()).add(product);
-        }
-        return output;
+        return products.stream().collect(Collectors.groupingBy(ProductRecord::category));
     }
 
     public List<ProductRecord> getChangedProducts() {
